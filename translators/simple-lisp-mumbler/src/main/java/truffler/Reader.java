@@ -82,7 +82,7 @@ public class Reader {
     private static Form readList(PushbackReader pstream)
             throws IOException {
         // open paren is already read
-        List<Form> list = new ArrayList<Form>();
+        List<Form> list = new ArrayList<>();
         readWhitespace(pstream);
         char c = (char) pstream.read();
         while (true) {

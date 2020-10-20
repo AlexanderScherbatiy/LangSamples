@@ -22,6 +22,11 @@ public class StringForm extends Form {
     }
 
     @Override
+    public int hashCode() {
+        return this.str.hashCode();
+    }
+
+    @Override
     public Object eval(Environment env) {
         return this.str;
     }

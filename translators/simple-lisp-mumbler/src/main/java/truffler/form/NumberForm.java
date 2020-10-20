@@ -21,6 +21,11 @@ public class NumberForm extends Form {
     }
 
     @Override
+    public int hashCode() {
+        return Long.hashCode(num);
+    }
+
+    @Override
     public Object eval(Environment env) {
         return this.num;
     }

@@ -1,12 +1,12 @@
 package truffler.env;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import truffler.form.SymbolForm;
 
 public class Environment {
-    private final HashMap<SymbolForm, Object> env =
-        new HashMap<SymbolForm, Object>();
+    private final Map<SymbolForm, Object> env = new HashMap<>();
 
     private final Environment parent;
 
