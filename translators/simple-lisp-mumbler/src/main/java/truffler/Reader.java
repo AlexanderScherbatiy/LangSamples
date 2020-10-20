@@ -1,14 +1,5 @@
 package truffler;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackReader;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import truffler.form.BooleanForm;
 import truffler.form.Form;
 import truffler.form.ListForm;
@@ -17,6 +8,12 @@ import truffler.form.SpecialForm;
 import truffler.form.StringForm;
 import truffler.form.SymbolForm;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PushbackReader;
+
 
 public class Reader {
     public static ListForm read(InputStream istream) throws IOException {
@@ -24,18 +21,17 @@ public class Reader {
     }
 
     private static ListForm read(PushbackReader pstream) throws IOException {
-        List<Form> forms = new ArrayList<Form>();
+        ListForm forms = ListForm.EMPTY;
 
         readWhitespace(pstream);
         char c = (char) pstream.read();
         while ((byte) c != -1) {
             pstream.unread(c);
-            forms.add(readForm(pstream));
+            forms = forms.cons(readForm(pstream));
             readWhitespace(pstream);
             c = (char) pstream.read();
         }
-
-        return ListForm.list(forms);
+        return forms;
     }
 
     public static Form readForm(PushbackReader pstream) throws IOException {
@@ -82,7 +78,7 @@ public class Reader {
     private static Form readList(PushbackReader pstream)
             throws IOException {
         // open paren is already read
-        List<Form> list = new ArrayList<>();
+        ListForm list = ListForm.EMPTY;
         readWhitespace(pstream);
         char c = (char) pstream.read();
         while (true) {
@@ -95,11 +91,11 @@ public class Reader {
                 throw new EOFException("EOF reached before closing of list");
             } else {
                 pstream.unread(c);
-                list.add(readForm(pstream));
+                list = list.cons(readForm(pstream));
             }
             c = (char) pstream.read();
         }
-        return SpecialForm.check(ListForm.list(list));
+        return SpecialForm.check(list.reverse());
     }
 
     private static NumberForm readNumber(PushbackReader pstream)

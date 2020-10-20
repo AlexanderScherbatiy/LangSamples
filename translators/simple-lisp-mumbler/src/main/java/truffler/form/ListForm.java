@@ -12,41 +12,38 @@ public class ListForm extends Form implements Iterable<Form> {
 
     public final Form car;
     public final ListForm cdr;
+    private final int length;
 
     private ListForm() {
         this.car = null;
         this.cdr = null;
+        this.length = 0;
     }
 
     private ListForm(Form car, ListForm cdr) {
         this.car = car;
         this.cdr = cdr;
-    }
-
-    public static ListForm list(List<Form> forms) {
-        ListForm l = EMPTY;
-        for (int i=forms.size()-1; i>=0; i--) {
-            l = l.cons(forms.get(i));
-        }
-        return l;
+        this.length = cdr.length + 1;
     }
 
     public ListForm cons(Form form) {
         return new ListForm(form, this);
     }
 
-    public long length() {
-        if (this == EMPTY) {
-            return 0;
-        }
+    public ListForm reverse() {
+        ListForm r = EMPTY;
+        ListForm l = this;
 
-        long len = 1;
-        ListForm l = this.cdr;
         while (l != EMPTY) {
-            len++;
+            r = r.cons(l.car);
             l = l.cdr;
         }
-        return len;
+
+        return r;
+    }
+
+    public long length() {
+        return this.length;
     }
 
     public Iterator<Form> iterator() {
@@ -85,9 +82,11 @@ public class ListForm extends Form implements Iterable<Form> {
         }
 
         ListForm that = (ListForm) other;
-        if (this.cdr == EMPTY && that.cdr != EMPTY) {
+
+        if (this.length() != ((ListForm) other).length()) {
             return false;
         }
+
         return this.car.equals(that.car) && this.cdr.equals(that.cdr);
     }
 
@@ -97,20 +96,19 @@ public class ListForm extends Form implements Iterable<Form> {
             return "()";
         }
 
-        StringBuilder b = new StringBuilder("(" + this.car);
-        Form rest = this.cdr;
-        while (rest != null && rest != EMPTY) {
+        StringBuilder b = new StringBuilder();
+        b.append('(');
+        b.append(this.car);
+
+        ListForm list = this.cdr;
+        while (list != EMPTY) {
             b.append(" ");
-            if (rest instanceof ListForm) {
-                ListForm l = (ListForm) rest;
-                b.append(l.car);
-                rest = l.cdr;
-            } else {
-                b.append(rest);
-                rest = null;
-            }
+            b.append(list.car);
+            list = list.cdr;
         }
+
         b.append(")");
+
         return b.toString();
     }
 
