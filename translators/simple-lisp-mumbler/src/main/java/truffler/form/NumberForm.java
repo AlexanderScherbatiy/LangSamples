@@ -17,11 +17,11 @@ public class NumberForm extends Form {
     @Override
     public boolean equals(Object other) {
         return other instanceof NumberForm &&
-            this.num == ((NumberForm) other).num;
+                this.num == ((NumberForm) other).num;
     }
 
     @Override
     public Object eval(Environment env) {
-        return new Long(this.num);
+        return this.num;
     }
 }

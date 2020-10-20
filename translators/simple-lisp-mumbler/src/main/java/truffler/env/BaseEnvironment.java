@@ -90,6 +90,17 @@ public class BaseEnvironment {
             }
         };
 
+    private static final Fn PRINTLN = new BuiltinFn("PRINTLN") {
+        @Override
+        public Object apply(Object... args) {
+            StringBuilder builder = new StringBuilder();
+            for (Object arg : args) {
+                builder.append(arg);
+            }
+            return builder.toString();
+        }
+    };
+
     public static Environment getBaseEnvironment() {
         Environment env = new Environment();
         env.putValue(new SymbolForm("+"), PLUS);
@@ -97,6 +108,7 @@ public class BaseEnvironment {
         env.putValue(new SymbolForm("*"), MULT);
         env.putValue(new SymbolForm("/"), DIV);
         env.putValue(new SymbolForm("="), EQUALS);
+        env.putValue(new SymbolForm("println"), PRINTLN);
         return env;
     }
 }

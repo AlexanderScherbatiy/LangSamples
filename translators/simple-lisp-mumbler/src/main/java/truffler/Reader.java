@@ -14,6 +14,7 @@ import truffler.form.Form;
 import truffler.form.ListForm;
 import truffler.form.NumberForm;
 import truffler.form.SpecialForm;
+import truffler.form.StringForm;
 import truffler.form.SymbolForm;
 
 
@@ -44,6 +45,8 @@ public class Reader {
         } else if (Character.isDigit(c)) {
             pstream.unread(c);
             return readNumber(pstream);
+        } else if (c == '"') {
+            return readString(pstream);
         } else if (c == '#') {
             return readBoolean(pstream);
         } else if (c == ')') {
@@ -68,7 +71,7 @@ public class Reader {
         StringBuilder b = new StringBuilder();
         char c = (char) pstream.read();
         while (!(Character.isWhitespace(c) || (byte) c == -1
-                        || c == '(' || c == ')')) {
+                || c == '(' || c == ')')) {
             b.append(c);
             c = (char) pstream.read();
         }
@@ -111,8 +114,20 @@ public class Reader {
         return new NumberForm(Long.valueOf(b.toString(), 10));
     }
 
+    private static StringForm readString(PushbackReader pstream)
+            throws IOException {
+        StringBuilder b = new StringBuilder();
+        char c = (char) pstream.read();
+        while (c != '"') {
+            b.append(c);
+            c = (char) pstream.read();
+        }
+        return new StringForm(b.toString());
+    }
+
     private static final SymbolForm TRUE_SYM = new SymbolForm("t");
     private static final SymbolForm FALSE_SYM = new SymbolForm("f");
+
     private static BooleanForm readBoolean(PushbackReader pstream)
             throws IOException {
         // '#' already read
