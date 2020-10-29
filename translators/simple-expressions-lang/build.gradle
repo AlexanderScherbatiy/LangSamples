@@ -24,14 +24,14 @@ generateGrammarSource {
 
 application {
     applicationName = 'SimpleExpressinLang'
-    mainClassName = 'example.ExpressionLangSample'
+    mainClassName = 'example.ExpressionCalculator'
 }
 
 jar {
     manifest {
         attributes(
                 'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
-                'Main-Class': 'example.ExpressionLangSample'
+                'Main-Class': 'example.ExpressionCalculator'
         )
     }
 }
