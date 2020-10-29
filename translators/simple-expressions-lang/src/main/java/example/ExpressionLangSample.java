@@ -15,6 +15,10 @@ public class ExpressionLangSample {
         show("2 * 3");
         show("5 - 3");
         show("6 / 2");
+        show("1 + 2 + 3");
+        show("(1 + 2) * 3");
+        show("1 + (2 * 3)");
+        show("3 * (1 + 2)");
     }
 
     private static void show(String expr) {
@@ -71,6 +75,11 @@ public class ExpressionLangSample {
         @Override
         public Double visitNumber(ExpressionParser.NumberContext ctx) {
             return Double.parseDouble(ctx.NUMBER().getText());
+        }
+
+        @Override
+        public Double visitParentheses(ExpressionParser.ParenthesesContext ctx) {
+            return visit(ctx.expr());
         }
     }
 }
