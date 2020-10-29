@@ -1,17 +1,46 @@
 grammar Expression;
 
-expr: term ((PLUS|MINUS) term)* ;
-term: factor ((MULT|DIV) factor)* ;
-factor: NUMBER;
+@header {
+    package expression;
+}
 
-PLUS : '+' ;
-MINUS: '-' ;
-MULT:  '*' ;
-DIV:   '/' ;
+expr
+    : term ((PLUS|MINUS) term)*
+    ;
 
-NUMBER: (DIGIT)+;
+term
+    : factor ((MULT|DIV) factor)*
+    ;
 
-DIGIT: '0'..'9';
+factor
+    : NUMBER
+    ;
 
-WS: [ \t\r\n]+ -> skip ;
+PLUS
+    : '+'
+    ;
+
+MINUS
+    : '-'
+    ;
+
+MULT
+    :  '*'
+    ;
+
+DIV
+    :   '/'
+    ;
+
+NUMBER
+    : (DIGIT)+
+    ;
+
+DIGIT
+    : '0'..'9'
+    ;
+
+WS
+    : [ \t\r\n]+ -> skip
+    ;
 
