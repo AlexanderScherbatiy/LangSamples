@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 public class ExpressionLangSample {
 
     public static void main(String[] args) {
+        show("42");
         show("2 + 3");
         show("2 * 3");
         show("5 - 3");
@@ -27,66 +28,49 @@ public class ExpressionLangSample {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         ExpressionParser parser = new ExpressionParser(tokenStream);
         InterpreterExpressionVisitor visitor = new InterpreterExpressionVisitor();
-        return visitor.visit(parser.expr());
+        return visitor.visit(parser.root());
     }
 
     static class InterpreterExpressionVisitor extends ExpressionBaseVisitor<Double> {
 
         @Override
-        public Double visitExpr(ExpressionParser.ExprContext ctx) {
-            switch (ctx.getChildCount()) {
-                case 1:
-                    return super.visit(ctx.getChild(0));
-                case 3: {
+        public Double visitRoot(ExpressionParser.RootContext ctx) {
+            return super.visit(ctx.expr());
+        }
 
-                    double v1 = super.visit(ctx.getChild(0));
-                    double v2 = super.visit(ctx.getChild(2));
-
-                    switch (ctx.getChild(1).getText()) {
-                        case "+":
-                            return v1 + v2;
-                        case "-":
-                            return v1 - v2;
-                        default:
-                            throw new RuntimeException(
-                                    "Term wrong operation: " + ctx.getChild(1).getText());
-                    }
-                }
+        @Override
+        public Double visitMulDiv(ExpressionParser.MulDivContext ctx) {
+            double v1 = visit(ctx.expr(0));
+            double v2 = visit(ctx.expr(1));
+            switch (ctx.op.getType()) {
+                case ExpressionParser.MUL:
+                    return v1 * v2;
+                case ExpressionParser.DIV:
+                    return v1 / v2;
                 default:
                     throw new RuntimeException(
-                            "Term wrong number of children: " + ctx.getChildCount());
+                            "Unknown Mul/Div operation: " + ctx.op.getText());
             }
         }
 
         @Override
-        public Double visitTerm(ExpressionParser.TermContext ctx) {
-            switch (ctx.getChildCount()) {
-                case 1:
-                    return super.visit(ctx.getChild(0));
-                case 3: {
-
-                    double v1 = super.visit(ctx.getChild(0));
-                    double v2 = super.visit(ctx.getChild(2));
-
-                    switch (ctx.getChild(1).getText()) {
-                        case "*":
-                            return v1 * v2;
-                        case "/":
-                            return v1 / v2;
-                        default:
-                            throw new RuntimeException(
-                                    "Term wrong operation: " + ctx.getChild(1).getText());
-                    }
-                }
+        public Double visitAddSub(ExpressionParser.AddSubContext ctx) {
+            double v1 = visit(ctx.expr(0));
+            double v2 = visit(ctx.expr(1));
+            switch (ctx.op.getType()) {
+                case ExpressionParser.PLUS:
+                    return v1 + v2;
+                case ExpressionParser.MINUS:
+                    return v1 - v2;
                 default:
                     throw new RuntimeException(
-                            "Term wrong number of children: " + ctx.getChildCount());
+                            "Unknown Plus/Minus operation: " + ctx.op.getText());
             }
         }
 
         @Override
-        public Double visitFactor(ExpressionParser.FactorContext ctx) {
-            return Double.parseDouble(ctx.getText());
+        public Double visitNumber(ExpressionParser.NumberContext ctx) {
+            return Double.parseDouble(ctx.NUMBER().getText());
         }
     }
 }
