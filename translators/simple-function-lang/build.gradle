@@ -1,0 +1,37 @@
+plugins {
+    id 'antlr'
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+
+    antlr 'org.antlr:antlr4:4.8'
+
+    compile 'org.antlr:antlr4-runtime:4.8'
+
+    testImplementation 'junit:junit:4.12'
+}
+
+generateGrammarSource {
+    arguments += ["-visitor"]
+    outputDirectory = file("${project.buildDir}/generated-src/antlr/main/func")
+}
+
+application {
+    applicationName = 'SimpleFunctionLang'
+    mainClassName = 'func.SimpleFunctionLang'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'func.SimpleFunctionLang'
+        )
+    }
+}
